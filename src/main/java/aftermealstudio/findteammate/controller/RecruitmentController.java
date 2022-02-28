@@ -31,9 +31,13 @@ public class RecruitmentController {
 
     @PatchMapping("/{recruitmentId}/members")
     public ModelAndView join(@PathVariable Long recruitmentId) {
-
         recruitmentService.join(recruitmentId);
         return new ModelAndView("hello");
     }
 
+    @DeleteMapping("/{recruitmentId}/members")
+    public ModelAndView unjoin(@PathVariable Long recruitmentId) {
+        recruitmentService.unjoin(recruitmentId);
+        return new ModelAndView("hello");
+    }
 }
