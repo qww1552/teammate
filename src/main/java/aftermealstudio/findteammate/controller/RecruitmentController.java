@@ -4,6 +4,7 @@ import aftermealstudio.findteammate.model.dto.recruitment.Create;
 import aftermealstudio.findteammate.model.dto.recruitment.Response;
 import aftermealstudio.findteammate.service.RecruitmentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,27 +18,25 @@ public class RecruitmentController {
 
     @GetMapping
     public ModelAndView create() {
-        ModelAndView modelAndView = new ModelAndView("create-recruitment");
-        return modelAndView;
+        return new ModelAndView("create-recruitment");
     }
 
     @PostMapping
-    public ModelAndView create(Create create) {
+    public ResponseEntity<Response> create(Create create) {
         Response response = recruitmentService.create(create);
 
-        ModelAndView modelAndView = new ModelAndView("create-recruitment");
-        return modelAndView;
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{recruitmentId}/members")
-    public ModelAndView join(@PathVariable Long recruitmentId) {
+    public ResponseEntity<Object> join(@PathVariable Long recruitmentId) {
         recruitmentService.join(recruitmentId);
-        return new ModelAndView("hello");
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{recruitmentId}/members")
-    public ModelAndView unjoin(@PathVariable Long recruitmentId) {
+    public ResponseEntity<Object> unjoin(@PathVariable Long recruitmentId) {
         recruitmentService.unjoin(recruitmentId);
-        return new ModelAndView("hello");
+        return ResponseEntity.ok().build();
     }
 }
