@@ -40,4 +40,11 @@ public class Recruitment {
         this.content = content;
         this.author = author;
     }
+
+    public void add(Member member) {
+        if (members.contains(member))
+            throw new RuntimeException();
+        else
+            this.members.add(member);
+    }
 }

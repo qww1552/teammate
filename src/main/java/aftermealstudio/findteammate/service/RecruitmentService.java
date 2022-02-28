@@ -10,6 +10,7 @@ import aftermealstudio.findteammate.util.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -19,10 +20,7 @@ public class RecruitmentService {
     private final MemberRepository memberRepository;
 
     public Response create(Create create) {
-        String username = AuthenticationUtil.getCurrentUsername();
-
-        Member currentMember = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
+        Member currentMember = getCurrentMember();
 
         Recruitment recruitment = Recruitment.builder()
                 .title(create.getTitle())
@@ -33,5 +31,21 @@ public class RecruitmentService {
         Recruitment save = recruitmentRepository.save(recruitment);
 
         return new Response(save);
+    }
+
+    @Transactional
+    public void join(Long recruitmentId) {
+        Recruitment recruitment = recruitmentRepository.findById(recruitmentId).orElseThrow(
+                () -> new RuntimeException());
+
+        recruitment.add(getCurrentMember());
+    }
+
+    private Member getCurrentMember() {
+        String username = AuthenticationUtil.getCurrentUsername();
+
+        Member currentMember = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        return currentMember;
     }
 }
