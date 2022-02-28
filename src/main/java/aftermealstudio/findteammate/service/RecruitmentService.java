@@ -4,6 +4,7 @@ import aftermealstudio.findteammate.model.dto.recruitment.Create;
 import aftermealstudio.findteammate.model.dto.recruitment.Response;
 import aftermealstudio.findteammate.model.entity.Member;
 import aftermealstudio.findteammate.model.entity.Recruitment;
+import aftermealstudio.findteammate.model.exception.RecruitmentNotFoundException;
 import aftermealstudio.findteammate.repository.MemberRepository;
 import aftermealstudio.findteammate.repository.RecruitmentRepository;
 import aftermealstudio.findteammate.util.AuthenticationUtil;
@@ -35,17 +36,27 @@ public class RecruitmentService {
 
     @Transactional
     public void join(Long recruitmentId) {
-        Recruitment recruitment = recruitmentRepository.findById(recruitmentId).orElseThrow(
-                () -> new RuntimeException());
+        Recruitment recruitment = getRecruitmentOrThrowNotFound(recruitmentId);
 
         recruitment.add(getCurrentMember());
+    }
+
+    @Transactional
+    public void unjoin(Long recruitmentId) {
+        Recruitment recruitment = getRecruitmentOrThrowNotFound(recruitmentId);
+
+        recruitment.remove(getCurrentMember());
+    }
+
+    private Recruitment getRecruitmentOrThrowNotFound(Long recruitmentId) {
+        return recruitmentRepository.findById(recruitmentId).orElseThrow(
+                RecruitmentNotFoundException::new);
     }
 
     private Member getCurrentMember() {
         String username = AuthenticationUtil.getCurrentUsername();
 
-        Member currentMember = memberRepository.findByUsername(username)
+        return memberRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-        return currentMember;
     }
 }
