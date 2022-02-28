@@ -1,5 +1,7 @@
 package aftermealstudio.findteammate.model.entity;
 
+import aftermealstudio.findteammate.model.exception.MemberAlreadyJoinedException;
+import aftermealstudio.findteammate.model.exception.MemberDoesNotJoinedException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,5 +41,19 @@ public class Recruitment {
         this.title = title;
         this.content = content;
         this.author = author;
+    }
+
+    public void add(Member member) {
+        if (members.contains(member))
+            throw new MemberAlreadyJoinedException();
+        else
+            this.members.add(member);
+    }
+
+    public void remove(Member member) {
+        if (!members.contains(member))
+            throw new MemberDoesNotJoinedException();
+        else
+            members.remove(member);
     }
 }

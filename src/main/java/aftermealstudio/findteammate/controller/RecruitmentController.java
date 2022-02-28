@@ -5,9 +5,7 @@ import aftermealstudio.findteammate.model.dto.recruitment.Response;
 import aftermealstudio.findteammate.service.RecruitmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 @RequiredArgsConstructor
@@ -31,5 +29,15 @@ public class RecruitmentController {
         return modelAndView;
     }
 
+    @PatchMapping("/{recruitmentId}/members")
+    public ModelAndView join(@PathVariable Long recruitmentId) {
+        recruitmentService.join(recruitmentId);
+        return new ModelAndView("hello");
+    }
 
+    @DeleteMapping("/{recruitmentId}/members")
+    public ModelAndView unjoin(@PathVariable Long recruitmentId) {
+        recruitmentService.unjoin(recruitmentId);
+        return new ModelAndView("hello");
+    }
 }
