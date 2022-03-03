@@ -13,6 +13,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Service
 public class RecruitmentService {
@@ -32,6 +35,17 @@ public class RecruitmentService {
         Recruitment save = recruitmentRepository.save(recruitment);
 
         return new Response(save);
+    }
+
+    public List<Response> findAll() {
+        return recruitmentRepository.findAll().stream()
+                .map(Response::new)
+                .collect(Collectors.toList());
+    }
+
+    public Response findById(Long recruitmentId) {
+        Recruitment recruitment = getRecruitmentOrThrowNotFound(recruitmentId);
+        return new Response(recruitment);
     }
 
     @Transactional
