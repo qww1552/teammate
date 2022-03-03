@@ -37,7 +37,8 @@ public class Recruitment {
     }
 
     @Builder
-    public Recruitment(String title, String content, Member author) {
+    public Recruitment(Long id, String title, String content, Member author) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.author = author;
