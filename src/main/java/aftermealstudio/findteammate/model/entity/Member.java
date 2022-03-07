@@ -27,6 +27,8 @@ public class Member implements UserDetails {
 
     private String password;
 
+    private String verificationCode;
+
     private boolean accountNonExpired;
 
     private boolean accountNonLocked;
@@ -55,10 +57,18 @@ public class Member implements UserDetails {
         this.authorities = authorities;
     }
 
+    public void setVerificationCode(String code) {
+        this.verificationCode = code;
+    }
+
+    public void verify() {
+        this.accountNonLocked = true;
+    }
+
     @PrePersist
     public void init() {
         this.accountNonExpired = true;
-        this.accountNonLocked = true;
+        this.accountNonLocked = false;
         this.enabled = true;
         this.credentialsNonExpired = true;
     }
