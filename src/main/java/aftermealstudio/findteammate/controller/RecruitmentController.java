@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import java.util.List;
 
 
@@ -41,7 +42,7 @@ public class RecruitmentController {
     }
 
     @PostMapping("/{recruitmentId}/members")
-    public ResponseEntity submitApplicationForJoin(@PathVariable Long recruitmentId) {
+    public ResponseEntity submitApplicationForJoin(@PathVariable Long recruitmentId) throws MessagingException {
         emailAlarmService.sendApplicationForJoin(recruitmentId);
         return ResponseEntity.ok().build();
     }
