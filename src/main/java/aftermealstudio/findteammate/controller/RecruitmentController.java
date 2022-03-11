@@ -2,11 +2,13 @@ package aftermealstudio.findteammate.controller;
 
 import aftermealstudio.findteammate.model.dto.recruitment.Create;
 import aftermealstudio.findteammate.model.dto.recruitment.Response;
+import aftermealstudio.findteammate.service.EmailAlarmService;
 import aftermealstudio.findteammate.service.RecruitmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import java.util.List;
 
 
@@ -16,11 +18,7 @@ import java.util.List;
 public class RecruitmentController {
 
     private final RecruitmentService recruitmentService;
-//
-//    @GetMapping
-//    public ModelAndView create() {
-//        return new ModelAndView("create-recruitment");
-//    }
+    private final EmailAlarmService emailAlarmService;
 
     @GetMapping
     public ResponseEntity<List<Response>> getAll() {
@@ -37,15 +35,21 @@ public class RecruitmentController {
     }
 
     @PostMapping
-    public ResponseEntity<Response> create(Create create) {
+    public ResponseEntity<Response> create(@RequestBody Create create) {
         Response response = recruitmentService.create(create);
 
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/{recruitmentId}/members")
-    public ResponseEntity<Object> join(@PathVariable Long recruitmentId) {
-        recruitmentService.join(recruitmentId);
+    @PostMapping("/{recruitmentId}/members")
+    public ResponseEntity submitApplicationForJoin(@PathVariable Long recruitmentId) throws MessagingException {
+        emailAlarmService.sendApplicationForJoin(recruitmentId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{recruitmentId}/members/{username}")
+    public ResponseEntity<Object> join(@PathVariable Long recruitmentId, @PathVariable String username) {
+        recruitmentService.join(recruitmentId, username);
         return ResponseEntity.ok().build();
     }
 

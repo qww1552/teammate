@@ -16,11 +16,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
 
+import static aftermealstudio.findteammate.util.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -51,14 +50,14 @@ public class JoinTest {
 
         Member member = getMemberForTest();
 
-        setAuthentication(member);
+        setAuthentication();
 
         when(recruitmentRepository.findById(any()))
                 .thenReturn(java.util.Optional.of(recruitment));
         when(memberRepository.findByUsername(any()))
                 .thenReturn(Optional.of(member));
 
-        recruitmentService.join(recruitment.getId());
+        recruitmentService.join(recruitment.getId(), member.getUsername());
 
         Assertions.assertThat(recruitment.getMembers()).contains(member);
     }
@@ -71,7 +70,7 @@ public class JoinTest {
         Member member = getMemberForTest();
 
         recruitment.add(member);
-        setAuthentication(member);
+        setAuthentication();
 
         when(recruitmentRepository.findById(any()))
                 .thenReturn(java.util.Optional.of(recruitment));
@@ -79,7 +78,7 @@ public class JoinTest {
                 .thenReturn(Optional.of(member));
 
         assertThrows(MemberAlreadyJoinedException.class, () ->
-                recruitmentService.join(recruitment.getId())
+                recruitmentService.join(recruitment.getId(), member.getUsername())
         );
     }
 
@@ -91,7 +90,7 @@ public class JoinTest {
         Member member = getMemberForTest();
         recruitment.add(member);
 
-        setAuthentication(member);
+        setAuthentication();
 
         when(recruitmentRepository.findById(any()))
                 .thenReturn(java.util.Optional.of(recruitment));
@@ -110,7 +109,7 @@ public class JoinTest {
 
         Member member = getMemberForTest();
 
-        setAuthentication(member);
+        setAuthentication();
 
         when(recruitmentRepository.findById(any()))
                 .thenReturn(java.util.Optional.of(recruitment));
@@ -127,7 +126,7 @@ public class JoinTest {
     void unJoinFailWithNotFoundTest() {
         Member member = getMemberForTest();
 
-        setAuthentication(member);
+        setAuthentication();
 
         assertThrows(RecruitmentNotFoundException.class, () ->
             recruitmentService.unjoin(any())
@@ -139,39 +138,11 @@ public class JoinTest {
     void joinFailWithNotFoundTest() {
         Member member = getMemberForTest();
 
-        setAuthentication(member);
+        setAuthentication();
 
         assertThrows(RecruitmentNotFoundException.class, () ->
-            recruitmentService.join(any())
+            recruitmentService.join(any(), member.getUsername())
         );
     }
 
-
-    private void setAuthentication(Member member) {
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(
-                        member.getUsername(),
-                        member.getPassword()
-                )
-        );
-    }
-
-    private Member getMemberForTest() {
-        return Member.builder()
-                .username("joinedMember")
-                .password("password")
-                .build();
-    }
-
-    private Recruitment getRecruitmentForTest() {
-        Recruitment recruitment = Recruitment.builder()
-                .title("title")
-                .content("content")
-                .author(author)
-                .build();
-
-        recruitment.init();
-        
-        return recruitment;
-    }
 }

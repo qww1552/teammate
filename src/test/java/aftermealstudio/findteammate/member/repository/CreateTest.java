@@ -39,7 +39,7 @@ public class CreateTest {
                 .get();
 
         Assertions.assertThat(byUsername.isAccountNonExpired()).isTrue();
-        Assertions.assertThat(byUsername.isAccountNonLocked()).isTrue();
+        Assertions.assertThat(byUsername.isAccountNonLocked()).isFalse(); // 인증을 받지 않으면 false
         Assertions.assertThat(byUsername.isCredentialsNonExpired()).isTrue();
         Assertions.assertThat(byUsername.isEnabled()).isTrue();
     }

@@ -4,6 +4,7 @@ import aftermealstudio.findteammate.model.dto.recruitment.Create;
 import aftermealstudio.findteammate.model.dto.recruitment.Response;
 import aftermealstudio.findteammate.model.entity.Member;
 import aftermealstudio.findteammate.model.entity.Recruitment;
+import aftermealstudio.findteammate.model.exception.MemberNotFoundException;
 import aftermealstudio.findteammate.model.exception.RecruitmentNotFoundException;
 import aftermealstudio.findteammate.repository.MemberRepository;
 import aftermealstudio.findteammate.repository.RecruitmentRepository;
@@ -49,10 +50,10 @@ public class RecruitmentService {
     }
 
     @Transactional
-    public void join(Long recruitmentId) {
+    public void join(Long recruitmentId, String username) {
         Recruitment recruitment = getRecruitmentOrThrowNotFound(recruitmentId);
-
-        recruitment.add(getCurrentMember());
+        Member member = memberRepository.findByUsername(username).orElseThrow(() -> new MemberNotFoundException());
+        recruitment.add(member);
     }
 
     @Transactional
